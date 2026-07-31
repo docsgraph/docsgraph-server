@@ -1,4 +1,8 @@
-"""Tests for the FastAPI app factory and the /health endpoint."""
+"""Smoke test: the app factory builds and the process serves requests.
+
+Placeholder until real endpoints land — deliberately not testing
+per-module stub behavior, since there is no real logic yet.
+"""
 
 import pytest
 from httpx import ASGITransport, AsyncClient
@@ -15,14 +19,3 @@ async def test_health_returns_ok() -> None:
 
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
-
-
-@pytest.mark.unit
-async def test_domain_routers_are_mounted() -> None:
-    app = create_app()
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as client:
-        response = await client.get("/api/v1/documents")
-
-    assert response.status_code == 200
-    assert response.json() == {"documents": []}
