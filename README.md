@@ -57,6 +57,34 @@ To run the background job worker:
 uv run arq docsgraph_server.jobs.worker.WorkerSettings
 ```
 
+## Self-hosting
+
+### Minimum Requirements
+
+- **Container Engine**: Docker 20.10+ and Docker Compose 2.0+
+- **Hardware**: 1 vCPU, 1 GB RAM (minimum; scale depending on OCR/indexing workloads)
+- **Databases**: PostgreSQL 16+ and Redis 7+ (managed within the docker-compose stack or hosted externally)
+
+### Deployment
+
+1. **Configuration**: Copy the template environment file:
+   ```bash
+   cp .env.example .env
+   ```
+   For production deployments, ensure you set a secure `JWT_SECRET`, and override default database/Redis credentials if using external services.
+
+2. **Launch**:
+   Start the services. This will build the application image, run migrations via Alembic, and start the API and background worker:
+   ```bash
+   docker compose -f docker-compose.self-host.yml up -d --build
+   ```
+
+3. **Verify**:
+   Ensure the service is healthy:
+   ```bash
+   curl -f http://localhost:8000/health
+   ```
+
 ## Checks
 
 Run these before opening a PR (CI runs the same set on Python 3.12 and 3.13):

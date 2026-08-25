@@ -10,7 +10,7 @@ ENV UV_COMPILE_BYTECODE=1 \
 
 WORKDIR /app
 
-COPY pyproject.toml uv.lock* ./
+COPY pyproject.toml uv.lock* alembic.ini ./
 RUN uv sync --no-install-project --no-dev --no-editable
 
 COPY src ./src
@@ -26,6 +26,7 @@ WORKDIR /app
 
 COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/src /app/src
+COPY --from=builder /app/alembic.ini /app/alembic.ini
 
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1
