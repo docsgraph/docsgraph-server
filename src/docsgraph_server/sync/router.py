@@ -6,10 +6,18 @@ shape but raise `NotImplementedError` until sequence allocation and
 persistence are built.
 """
 
-from fastapi import APIRouter
-from docsgraph_server.sync.models import SyncPullResponse, SyncPushRequest, SyncPushResponse, SyncPushAck, SyncOp
 from datetime import datetime
 from uuid import UUID
+
+from fastapi import APIRouter
+
+from docsgraph_server.sync.models import (
+    SyncOp,
+    SyncPullResponse,
+    SyncPushAck,
+    SyncPushRequest,
+    SyncPushResponse,
+)
 
 router = APIRouter(prefix="/sync", tags=["sync"])
 
@@ -23,14 +31,14 @@ async def push(request: SyncPushRequest) -> SyncPushResponse:
     """Apply a client's pushed ops and return per-op sequence acknowledgements."""
     global _NEXT_SEQ
     acks = []
-    
+
     for op in request.ops:
         # Assign a global sequence number
         op.seq = _NEXT_SEQ
         _GLOBAL_OPS.append(op)
         acks.append(SyncPushAck(op_id=op.op_id, seq=_NEXT_SEQ))
         _NEXT_SEQ += 1
-        
+
         # Simulating a conflict:
         # If the client pushes an update to a document title, we simulate another
         # client immediately editing the same document's title on the server.
@@ -45,11 +53,11 @@ async def push(request: SyncPushRequest) -> SyncPushResponse:
                     operation=op.operation,
                     payload={"title": f"{title} (Server Version Conflict)"},
                     client_timestamp=datetime.now(),
-                    seq=_NEXT_SEQ
+                    seq=_NEXT_SEQ,
                 )
                 _GLOBAL_OPS.append(conflict_op)
                 _NEXT_SEQ += 1
-                
+
     return SyncPushResponse(acks=acks, cursor=_NEXT_SEQ - 1)
 
 
