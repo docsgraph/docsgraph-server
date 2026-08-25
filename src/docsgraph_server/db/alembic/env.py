@@ -10,10 +10,6 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from docsgraph_server.core.config import get_settings
 from docsgraph_server.db.base import Base
 
-# Import model modules here so they register on Base.metadata before
-# Alembic's autogenerate inspects it, e.g.:
-#   from docsgraph_server.documents.models import Document  # noqa: ERA001
-
 config = context.config
 
 if config.config_file_name is not None:
