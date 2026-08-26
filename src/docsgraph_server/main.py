@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI
 
-from docsgraph_server.api import audit, documents, permissions, workflows
+from docsgraph_server.api import audit, documents, permissions, retention, workflows
 from docsgraph_server.sync.router import router as sync_router
 
 
@@ -26,6 +26,7 @@ def create_app() -> FastAPI:
     app.include_router(permissions.router, prefix="/api/v1")
     app.include_router(workflows.router, prefix="/api/v1")
     app.include_router(audit.router, prefix="/api/v1")
+    app.include_router(retention.router, prefix="/api/v1")
     app.include_router(sync_router, prefix="/api/v1")
 
     @app.get("/health")
